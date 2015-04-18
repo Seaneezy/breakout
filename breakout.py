@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+
 #setting colors
 
 screenW=800
@@ -8,6 +9,7 @@ screenH=600
 
 score_color1=(255,255,255)
 score_color2=(200,0,0)
+background_image_filename='welcome.jpg'
 
 background_color=(0,0,0)
 
@@ -19,33 +21,40 @@ normal_block=(0,0,200)
 superBlock_color=(127,0,255)
 good_block=(0,200,0)
 bad_block=(200,0,0)
-
+gBlock_width=23 ^ (1+(screenW/800))
+gBlock_height=15 ^ (1+(screenH/600))
 block_width=23
 block_height=15
 
-outerListCounter=0
-innerListCounter=0
+
+rowCounter=0
+columnCounter=0
 outerListItem=-1
 innerListItem=-1
-"""
 levelMap1=[
-    [0,1,1,1,0,1,1,1,0,0,1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [1,0,0,0,0,1,0,0,0,1,0,0,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,1,0,0,1,1,1,0,1,1,1,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,1,0,1,0,0,0,1,0,0,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [1,1,1,0,0,1,1,1,0,1,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-
+    [0,0,0,1,1,1,0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0],
+    [0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0],
+    [0,0,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0],
+    [0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0],
+    [0,0,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0]
 ]
-print(len(levelMap1[0]))
-while outerListCounter<5:
-
-    while innerListCounter<32:
 """
+while rowCounter<len(levelMap1):
+    row=levelMap1[rowCounter]
+    print(row)
+    columnCounter=0
+    while columnCounter < len(row):
+        column=row[columnCounter]
+        if column==0:
+            print("blue")
+        elif column==1:
+            print("red")
 
+        columnCounter+=1
+    rowCounter+=1
 
-
-
-
+    #while innerListCounter<32:
+"""
 
 score=0
 #creating the block class
@@ -59,6 +68,15 @@ class superBlock(pygame.sprite.Sprite):
         self.rect.x=x
         self.rect.y=y
 """
+class goodBlock(pygame.sprite.Sprite):
+    def __init__(self,color,x,y):
+        super(goodBlock,self).__init__()
+        self.image=pygame.Surface([gBlock_width,gBlock_height])
+        self.image.fill(color)
+        self.rect=self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,color,x,y):
@@ -150,6 +168,7 @@ font=pygame.font.Font(None,36)
 background=pygame.Surface(screen.get_size())
 blocks = pygame.sprite.Group()
 superBlocks = pygame.sprite.Group()
+goodBlock=pygame.sprite.Group()
 balls=pygame.sprite.Group()
 allSprites=pygame.sprite.Group()
 #object player is being created and added to allSprites
@@ -165,6 +184,7 @@ top=80
 blockCount=32
 
 #creating blocks in rows(5) and columns within the rows
+"""
 for row in range(7):
     for column in range(0,blockCount):
         #modifying the positions of the blocks?
@@ -173,6 +193,25 @@ for row in range(7):
         blocks.add(block)
         allSprites.add(block)
     top +=block_height+2
+"""
+while rowCounter < len(levelMap1):
+    columnCounter=0
+    while columnCounter < 32:
+        outerListItem=levelMap1[rowCounter]
+        innerListItem=outerListItem[columnCounter]
+        if innerListItem ==0:
+            bColor=normal_block
+            block=Block(normal_block, columnCounter * (block_width + 2) + 2, top)
+            blocks.add(block)
+            allSprites.add(block)
+        elif innerListItem == 1:
+            bColor=good_block
+            block=Block(bColor, columnCounter * (block_width + 2)+2,top)
+            blocks.add(block)
+            allSprites.add(block)
+        columnCounter+=1
+    top += block_height
+    rowCounter+=1
 """
 for row in range(3):
     for column in range(0,blockCount):
@@ -189,8 +228,7 @@ deadBlockCounter=0
 exit_program=False
 
 while exit_program != True:
-    clock.tick(30)
-
+    clock.tick(45)
     screen.fill(background_color)
     for event in pygame.event.get():
         #if you quit the game via window closure, exit_program is TRUE
