@@ -112,7 +112,7 @@ pygame.display.set_caption("Breakout")
 pygame.mouse.set_visible(0)
 
 background=pygame.image.load(background_image_filename).convert()
-background=pygame.transform.scale(background, (1600,1200))
+#background=pygame.transform.scale(background, (1600,1200))
 gameOverBackground=pygame.image.load(game_over_image_filename).convert_alpha()
 blocks=pygame.sprite.Group()
 balls=pygame.sprite.Group()
